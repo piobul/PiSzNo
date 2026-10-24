@@ -1,60 +1,45 @@
 #ifndef F_CPU
-#define F_CPU 16000000UL // Zegar 16 MHz płytki Xplained Mini
+#define F_CPU 16000000UL
 #endif
 
 #include <avr/io.h>
 #include <util/delay.h>
-
-// Klasa reprezentująca diodę LED podłączoną w trybie Active-LOW
-class Led {
-private:
-    volatile uint8_t* ddrReg;
-    volatile uint8_t* portReg;
-    uint8_t pinBit;
-
-public:
-    Led(volatile uint8_t* ddr, volatile uint8_t* port, uint8_t bit)
-        : ddrReg(ddr), portReg(port), pinBit(bit) {
-        *ddrReg |= (1 << pinBit); // Ustawienie pinu jako wyjście
-        off();                     // Domyślnie wyłączona
-    }
-
-    void on() { *portReg |= (1 << pinBit); }   // Stan LOW = świeci
-    void off() { *portReg &= ~(1 << pinBit); }   // Stan HIGH = zgaszona
-    void toggle() { *portReg ^= (1 << pinBit); } // Przełączenie stanu
-};
-
-// Klasa reprezentująca przycisk z włączonym podciąganiem (Pull-up)
-class Button {
-private:
-    volatile uint8_t* ddrReg;
-    volatile uint8_t* portReg;
-    volatile uint8_t* pinReg;
-    uint8_t pinBit;
-
-public:
-    Button(volatile uint8_t* ddr, volatile uint8_t* port, volatile uint8_t* pin, uint8_t bit)
-        : ddrReg(ddr), portReg(port), pinReg(pin), pinBit(bit) {
-        *ddrReg &= ~(1 << pinBit); // Ustawienie pinu jako wejście
-        *portReg |= (1 << pinBit);  // Włączenie wewnętrznego rezystora Pull-up
-    }
-
-    bool isPressed() const {
-        // Po naciśnięciu przycisk zwiera pin do masy (stan LOW)
-        return !(*pinReg & (1 << pinBit));
-    }
-};
+#include "Display7Seg.hpp"
+#include "LedBar.hpp"
 
 int main(void) {
-    // Inicjalizacja obiektów sprzętowych (LED0 = PB5, SW0 = PB7)
-    Led statusLed(&DDRB, &PORTB, PORTB5);
-    Button userButton(&DDRB, &PORTB, &PINB, PINB7);
+    Display7Seg display;
+    LedBar ledBar;
+
+    display.init();
+    ledBar.init();
+
+    uint16_t counter = 0;   // Główny wartość licznika (0 - 9999)
+    uint16_t timerMs = 0;   // Zmienna czasowa do odmierzenia tempa zliczania
 
     while (1) {
-        if (userButton.isPressed()) {
-            statusLed.on(); // Dioda świeci, gdy trzymasz przycisk
-        } else {
-            statusLed.off(); // Dioda gaśnie po zwolnieniu
+        // 1. Odświeżenie jednej cyfry wyświetlacza (multipleksowanie co 3 ms)
+        display.update();
+        _delay_ms(3);
+        timerMs += 3;
+
+        // 2. Co 50 ms zwiększamy licznik (zmień tę wartość, aby przyspieszyć/spowolnić)
+        if (timerMs >= 50) {
+            timerMs = 0;
+            counter++;
+
+            // Nieskończona pętla: po 9999 wracamy do 0
+            if (counter > 9999) {
+                counter = 0;
+            }
+
+            // Aktualizacja cyfr na 7-segmentach
+            display.setNumber(counter);
+
+            // Wyznaczenie liczby diod LED:
+            // Każda setka dodaje 1 diodę. Po osiągnięciu 8 diod cykl się powtarza (0..8)
+            uint8_t ledsToLight = (counter / 100) % 9;
+            ledBar.setCount(ledsToLight);
         }
     }
 }
