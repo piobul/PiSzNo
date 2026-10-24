@@ -14,8 +14,10 @@ int main(void) {
     display.init();
     ledBar.init();
 
-    uint16_t counter = 0;   // Główny wartość licznika (0 - 9999)
-    uint16_t timerMs = 0;   // Zmienna czasowa do odmierzenia tempa zliczania
+    uint16_t counter = 0;       // Główny wartość licznika (0 - 9999)
+    uint16_t led_counter = 0;   // Wartość licznika diod do zapalenia
+    uint16_t timerMs = 0;       // Zmienna czasowa do odmierzenia tempa zliczania
+    bool led_up = true;
 
     while (1) {
         // 1. Odświeżenie jednej cyfry wyświetlacza (multipleksowanie co 3 ms)
@@ -24,13 +26,19 @@ int main(void) {
         timerMs += 3;
 
         // 2. Co 50 ms zwiększamy licznik (zmień tę wartość, aby przyspieszyć/spowolnić)
-        if (timerMs >= 50) {
+        if (timerMs >= 25) {
             timerMs = 0;
             counter++;
 
             // Nieskończona pętla: po 9999 wracamy do 0
-            if (counter > 9999) {
+            if (counter > 100) {
                 counter = 0;
+
+                if(led_up == true) {
+                    led_counter++;
+                } else {
+                    led_counter--;
+                }
             }
 
             // Aktualizacja cyfr na 7-segmentach
@@ -38,8 +46,13 @@ int main(void) {
 
             // Wyznaczenie liczby diod LED:
             // Każda setka dodaje 1 diodę. Po osiągnięciu 8 diod cykl się powtarza (0..8)
-            uint8_t ledsToLight = (counter / 100) % 9;
-            ledBar.setCount(ledsToLight);
+            ledBar.setCount(led_counter);
+
+            if(led_counter == 8) {
+                led_up = false;
+            } else if(led_counter == 0) {
+                led_up = true;
+            }
         }
     }
 }
