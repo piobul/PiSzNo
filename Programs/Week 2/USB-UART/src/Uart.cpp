@@ -16,6 +16,8 @@ void Uart::init(unsigned long baudrate) {
 
     // Format ramki: 8 bitów danych, 1 bit stopu, brak parzystości (8N1)
     UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
+
+    sendString("\r\n--- UART START ---\r\n");
 }
 
 void Uart::sendChar(char c) {

@@ -4,6 +4,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <stdio.h>
 #include "Display7Seg.hpp"
 #include "LedBar.hpp"
 #include "Uart.hpp"
@@ -17,11 +18,10 @@ int main(void) {
     ledBar.init();
     uart.init(9600);
 
-    uart.sendString("\r\n--- START LICZNIKA ATmega328PB ---\r\n");
-
     uint16_t counter = 0;       // Główny wartość licznika (0 - 9999)
     uint16_t led_counter = 0;   // Wartość licznika diod do zapalenia
     uint16_t timerMs = 0;       // Zmienna czasowa do odmierzenia tempa zliczania
+    char uartBuffer[64];
     bool led_up = true;
 
     while (1) {
@@ -45,7 +45,8 @@ int main(void) {
                     led_counter--;
                 }
 
-                uart.sendString("Counted 100\r\n");
+                snprintf(uartBuffer, sizeof(uartBuffer), "Counted 100! | LED's light: %u\r\n", led_counter);
+                uart.sendString(uartBuffer);
             }
 
             // Aktualizacja cyfr na 7-segmentach
@@ -63,36 +64,3 @@ int main(void) {
         }
     }
 }
-
-/*#ifndef F_CPU
-#define F_CPU 16000000UL
-#endif
-
-#include <avr/io.h>
-#include <util/delay.h>
-
-void uart0_init(unsigned long baudrate) {
-    uint16_t ubrr = (F_CPU / (16UL * baudrate)) - 1;
-    UBRR0H = (uint8_t)(ubrr >> 8);
-    UBRR0L = (uint8_t)(ubrr);
-    UCSR0B = (1 << TXEN0) | (1 << RXEN0); // Włączenie TX0 i RX0 na PORTD
-    UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); // 8N1
-}
-
-void uart0_sendChar(char c) {
-    while (!(UCSR0A & (1 << UDRE0)));
-    UDR0 = c;
-}
-
-void uart0_sendString(const char* str) {
-    while (*str) uart0_sendChar(*str++);
-}
-
-int main(void) {
-    uart0_init(9600);
-
-    while (1) {
-        uart0_sendString("TEST WBUDOWANEGO UART (mEDBG)\r\n");
-        _delay_ms(1000);
-    }
-}*/
