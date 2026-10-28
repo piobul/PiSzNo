@@ -1,5 +1,5 @@
-Project: [PISZNO] ???
-Progress and Current Status
+Project: [PISZNO] ??? Progress and Current Status:
+
 During the first two weeks of the project, we focused on gathering and documenting the essential information regarding the hardware utilized. Following the instructor's guidelines, we located and uploaded the official technical documentation (Datasheets, User Guides, etc.) for the following components to the repository:
 - ATMEGA328PB Xplained Mini: The main microcontroller platform.
 - USB-UART converter module (PL2303): The chip enabling serial communication.
@@ -22,5 +22,6 @@ The current project serves as a starting point for a broader, integrated initiat
 1. Design Lab: Within this subject, we will focus on the system architecture, integration of components (ATmega328PB, UART module, LCD), and the overall design of the device.
 2. Komputerowe systemy pomiarowe (Computer Measurement Systems): The project will be used to acquire, process, and present measurement data using the assembled hardware.
 3. Systemy i sieci telekomunikacyjne (Telecommunication Systems and Networks): We will focus on the data transmission aspect, likely utilizing the USB-UART module and appropriate communication protocols to transmit the gathered information to external systems.
+   
 This integration will allow us to create a comprehensive solution, combining circuit design, data acquisition, and network communication.
 
