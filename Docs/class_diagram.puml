@@ -1,0 +1,61 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+set namespaceSeparator ::
+
+package pb {
+  abstract class Sensor {
+    + {abstract} read(Measurement&) : bool
+    + name() : const char*
+    + ~Sensor()
+  }
+  abstract class TemperatureSensor {
+    + setOffset(float) : bool
+    + offset() : float
+  }
+  abstract class PressureSensor {
+    + setSeaLevel(float) : bool
+  }
+  class Ds18b20 {
+    + Ds18b20()
+    + Ds18b20(OneWireBus&, uint8_t pin)
+  }
+  class Bmp280 {
+    + Bmp280()
+    + Bmp280(I2cBus&)
+    + Bmp280(I2cBus&, uint8_t address)
+  }
+  class Measurement {
+    + Measurement()
+    + Measurement(float)
+    + Measurement(float, uint32_t)
+    + operator==(Measurement) : bool
+    + operator!=(Measurement) : bool
+    + operator<(Measurement) : bool
+  }
+  class "RingBuffer<T, N>" as RingBuffer {
+    + push(T) : bool
+    + pop(T&) : bool
+    + operator[](size_t) : T&
+    + size() : size_t
+  }
+  class TlvFrame {
+    + encode(Measurement, uint8_t*, size_t) : size_t
+    + decode(uint8_t*, size_t, Measurement&) : bool
+  }
+  class WeatherStation {
+    + addSensor(Sensor*) : bool
+    + sample() : bool
+  }
+}
+
+Sensor <|-- TemperatureSensor
+Sensor <|-- PressureSensor
+TemperatureSensor <|-- Ds18b20
+PressureSensor <|-- Bmp280
+WeatherStation o-- Sensor : uses
+WeatherStation *-- RingBuffer : contains
+RingBuffer ..> Measurement : stores
+TlvFrame ..> Measurement : encodes
+
+@enduml
