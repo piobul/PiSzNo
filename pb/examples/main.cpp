@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include<pb/measurement.hpp>
+#include <pb/measurement.hpp>
 
 int main() {
     constexpr pb::Measurement<uint32_t> empty;                  // value 0, timestamp 0
