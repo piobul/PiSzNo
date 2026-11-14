@@ -2,7 +2,6 @@
   "folders": [
     { "name": "firmware (PlatformIO)", "path": "firmware" },
     { "name": "pb", "path": "pb" },
-    { "name": "network", "path": "network" },
     { "name": "cały folder", "path": "." }
   ]
 }

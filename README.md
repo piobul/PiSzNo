@@ -1,27 +1,85 @@
-Project: [PISZNO] ??? Progress and Current Status:
+# PiSzNo – weather station
 
-During the first two weeks of the project, we focused on gathering and documenting the essential information regarding the hardware utilized. Following the instructor's guidelines, we located and uploaded the official technical documentation (Datasheets, User Guides, etc.) for the following components to the repository:
-- ATMEGA328PB Xplained Mini: The main microcontroller platform.
-- USB-UART converter module (PL2303): The chip enabling serial communication.
-- 1602 LCD Display (based on the Hitachi HD44780 controller): An alphanumeric screen for data presentation.
+PiSzNo is a single weather-station system built to satisfy the requirements of four university courses:
+Network Programming, Computer Measurement Systems and Design Lab.
+A microcontroller board measures temperature and pressure, a Linux server collects and shares the data,
+and two clients (console and LabVIEW) display it and change the shared configuration.
 
-This documentation serves as a necessary foundation for further software development and understanding the principles of operation for each element.
-We also focused on practical hardware and software setup during Weeks 1 and 2, which included:
-- Starting the ATmega328 boards.
-- Connecting the 7-segment display and LED bar.
-- Developing our first program, which features:
-    An incrementing counter from 1-100, displaying the value on the screen.
-    Logic that, after "turning" the counter, lights up the next LED on the bar and restarts the counting.
-    Logic that turns off the LEDs in reverse order after the bar is completely lit.
-- Beginning to draw the schematic diagram in KiCad, including the processor, display, and 8 LEDs.
+TODO: add 1–2 sentences about the goal of the project in the team's own words.
 
-Looking ahead to Weeks III-IV, our tasks include implementing data sending to a PC via the UART/USB port and expanding our KiCad schematic with the PL2303GT chip, which is now documented in our repository.
+## Courses
 
-Future Plans: Interdisciplinary Integration
-The current project serves as a starting point for a broader, integrated initiative. Our goal is to combine the work done so far into one cohesive system that will cover topics from three related subjects:
-1. Design Lab: Within this subject, we will focus on the system architecture, integration of components (ATmega328PB, UART module, LCD), and the overall design of the device.
-2. Komputerowe systemy pomiarowe (Computer Measurement Systems): The project will be used to acquire, process, and present measurement data using the assembled hardware.
-3. Systemy i sieci telekomunikacyjne (Telecommunication Systems and Networks): We will focus on the data transmission aspect, likely utilizing the USB-UART module and appropriate communication protocols to transmit the gathered information to external systems.
-   
-This integration will allow us to create a comprehensive solution, combining circuit design, data acquisition, and network communication.
+| Course | Part of the system |
+|---|---|
+| Network Programming (Programowanie sieciowe) | Server daemon and console client |
+| Computer Measurement Systems (Komputerowe systemy pomiarowe) | LabVIEW measurement panel |
+| Design Lab | Hardware: PCB designed in KiCad, firmware on the microcontroller |
+| *Object-Oriented Programming (Programowanie obiektowe) | C++ library `pb`: sensors, ring buffer, TLV frames |
 
+## Architecture
+
+```
+[ATmega328: DS18B20, BMP280, SD card, 7-seg display, LEDs, buttons]
+        |  UART (TLV frames)
+        v
+[Linux server (daemon, C++)]  <--- multicast discovery ---  [console client (C++)]
+        |  TCP unicast
+        +--------------------------------------------------> [console client (C++)]
+        |
+        +--> [LabVIEW panel]    TODO: decide how LabVIEW connects (VISA/UART or TCP)
+```
+
+- **Firmware** reads the sensors and sends measurements over UART as binary TLV frames.
+- **Server** runs as a daemon (logging to syslog), serves many clients concurrently and keeps
+  a shared configuration that clients can change under synchronisation.
+- **Clients** find the server with a multicast request and then talk to it over TCP.
+- **TLV protocol** is one shared frame format used by every component.
+
+TODO: describe the shared configuration (which values, e.g. measurement interval, alarm thresholds).
+
+## Repository layout
+
+| Folder | Content |
+|---|---|
+| `pb/` | C++ library (OOP course); `include/pb/`, `src/`, `examples/`, `tests/`, `docs/` |
+| `firmware/` | Final microcontroller firmware (PlatformIO) |
+| `network/` | `server/` (daemon), `client/` (console client), `docs/` |
+| `labview/` | LabVIEW panel and its user manual |
+| `hardware/` | KiCad schematic and PCB, `datasheets/` |
+| `design-lab/` | Weekly Design Lab programs (`week-1/`, `week-2/`, ...) |
+| `docs/` | Design decisions and the TLV protocol specification (to be added) |
+
+`PiSzNo.code-workspace` opens `firmware/`, `pb/` and the whole repository
+in one VS Code window.
+
+## Status
+
+Snapshot, see `PLAN.md` for the task list.
+
+| Component | State |
+|---|---|
+| Firmware | Prototype from Design Lab: counter, LED bar, UART output (copy of `design-lab/week-2/`) |
+| `pb` library | Folder skeleton and class diagram (`pb/docs/class_diagram.puml`) |
+| Server and client | Not started |
+| LabVIEW panel | Not started |
+| Hardware | Partial KiCad schematic (counter and LEDs), datasheets collected |
+
+## Building
+
+- **Firmware:** open the `firmware/` folder in VS Code with the PlatformIO extension and run Build.
+  The prototype is developed on an ATmega328PB Xplained Mini, the target PCB uses an ATmega328.
+  `monitor_port` in `platformio.ini` is set for one computer, change it to match yours.
+- **`pb` library and network programs:** TODO: add CMake commands.
+- **LabVIEW panel:** TODO: add LabVIEW version and required packages.
+- **Hardware:** TODO: add KiCad version.
+
+## Documentation
+
+- `docs/` – design decisions and TLV protocol (TODO: add links when the files exist)
+- `pb/docs/` – class diagram and OOP report (TODO)
+- `network/docs/` – Network Programming outline and documentation (TODO)
+- `labview/` – user manual (TODO)
+
+## Authors
+
+TODO: names and roles.
