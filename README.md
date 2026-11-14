@@ -55,7 +55,7 @@ TODO: describe the shared configuration (which values clients can change).
 | `design-lab/` | Weekly Design Lab programs (`week-1/`, `week-2/`, ...) and their notes |
 | `docs/` | Design decisions and the TLV protocol specification |
 
-`PiSzNo.code-workspace` opens `firmware/`, `pb/`, `network/` and the whole repository
+`PiSzNo.code-workspace` opens `firmware/`, `pb/` and the whole repository
 in one VS Code window. `PLAN.md` holds the task list.
 
 ## Status
@@ -88,6 +88,6 @@ Snapshot, see `PLAN.md` for the task list.
 
 ## Authors
 
-Piotr B. - programming
-Szczepan P. - repositorium & docs
-Norbert S. - schematics & PCB
+- Piotr B. - programming
+- Szczepan P. - repositorium & docs
+- Norbert S. - schematics & PCB

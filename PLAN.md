@@ -1,7 +1,10 @@
 # PiSzNo – project plan
 
-Update the checkboxes as work is done. Deadlines for Network Programming, Computer Measurement Systems and
-Object-Oriented Programming are in January. TODO: write down the exact dates.
+Update the checkboxes as work is done.
+
+Deadlines: Network Programming final submission about 22 January 2027 (from memory, confirm on UPEL).
+TODO: check the earlier deadline of the Network Programming outline, and the dates for Computer Measurement
+Systems and Object-Oriented Programming.
 
 ## Phase 0 – decisions and foundation
 
@@ -9,13 +12,19 @@ Object-Oriented Programming are in January. TODO: write down the exact dates.
 - [x] New root README and `pb/README.md`
 - [x] PlatformIO firmware builds the library from `../pb` (tested on Windows)
 - [x] Decision: board talks to the server over UART (no Ethernet module)
-- [ ] `docs/decyzje_projektowe.md` and `docs/protocol.md` added to the repo
-- [ ] Root `.gitignore` cleaned up
-- [ ] Decide: is `Measurement` a template (`Measurement<T>`)
-- [ ] Decide: server and client use `pb::TlvFrame` for TLV
-- [ ] Decide: which computer runs the LabVIEW panel
-- [ ] Decide: which values form the shared server configuration
-- [ ] Questions sent to the instructors (list in `docs/decyzje_projektowe.md`)
+- [x] `docs/decyzje_projektowe.md` and `docs/protocol.md` added to the repo
+- [x] Root `.gitignore` cleaned up
+- [x] Instructors consulted: shared project accepted by Object-Oriented Programming (while that part is done by
+  one person) and by Network Programming (team of three); `pb` as a dependency of server and client accepted
+- [x] Decision: one TLV frame everywhere (server and client use `pb::TlvFrame`)
+- [x] Decision: LabVIEW runs on the client computer, optionally also on the server computer
+- [x] Fill `pb/library.json`
+- [x] Decision: `Measurement` is a template (`Measurement<T>`)
+- [ ] Decide which type the sensors return (for example `Measurement<int32_t>` as fixed point, or `float`)
+- [x] C++17 works on the AVR toolchain with `-std=gnu++17` (tested on a test project)
+- [x] Decision: CMake generating Makefiles; the instructor accepts either CMake or Make
+- [ ] Decide the shared server configuration (while building the server)
+- [ ] Decide UART framing (while building the firmware and the server)
 
 ## Phase 1 – `pb` library (Object-Oriented Programming)
 
@@ -35,6 +44,7 @@ Object-Oriented Programming are in January. TODO: write down the exact dates.
 
 ## Phase 2 – firmware
 
+- [ ] Add the C++17 flags to `firmware/platformio.ini`
 - [ ] Replace the Design Lab classes with `pb` classes
 - [ ] Read DS18B20 and BMP280
 - [ ] Write measurements to the SD card

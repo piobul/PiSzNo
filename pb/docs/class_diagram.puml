@@ -26,13 +26,16 @@ package pb {
     + Bmp280(I2cBus&)
     + Bmp280(I2cBus&, uint8_t address)
   }
-  class Measurement {
+  class "Measurement<T>" as Measurement {
     + Measurement()
-    + Measurement(float)
-    + Measurement(float, uint32_t)
-    + operator==(Measurement) : bool
-    + operator!=(Measurement) : bool
-    + operator<(Measurement) : bool
+    + Measurement(T)
+    + Measurement(T, uint32_t)
+    + operator==(const Measurement&) : bool
+    + operator!=(const Measurement&) : bool
+    + operator<(const Measurement&) : bool
+    + operator>(const Measurement&) : bool
+    + operator<=(const Measurement&) : bool
+    + operator>=(const Measurement&) : bool
   }
   class "RingBuffer<T, N>" as RingBuffer {
     + push(T) : bool

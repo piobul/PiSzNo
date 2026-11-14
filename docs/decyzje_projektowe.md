@@ -1,6 +1,6 @@
 # Design decisions (decyzje projektowe)
 
-Last update: 2026-11-14. Move an item from "Open" to "Decided" when the team agrees.
+Last update: 2026-11-14. Move an item to "Decided" when the team agrees.
 
 ## Decided
 
@@ -9,35 +9,41 @@ Last update: 2026-11-14. Move an item from "Open" to "Decided" when the team agr
 - Weekly Design Lab programs stay in `design-lab/week-N/`; the final firmware is in `firmware/`.
 - Firmware is built with PlatformIO, opened from the `firmware/` folder.
 - The firmware uses `pb` through `lib_deps = symlink://../pb` (tested on Windows).
-- PC code (`pb`, server, client) is built with CMake (root `CMakeLists.txt` still to be written).
+- PC code (`pb`, server, client) is built with CMake, which generates Makefiles (root `CMakeLists.txt` still
+  to be written). The Object-Oriented Programming instructor accepts either CMake or Make.
+- `Measurement` in `pb` is a template (`Measurement<T>`).
+- The project uses C++17. On the AVR toolchain it needs `build_unflags = -std=gnu++11` and
+  `build_flags = -std=gnu++17` in `platformio.ini` (tested on a test project).
 - The Object-Oriented Programming part (`pb/`) is a separate project with its own README.
 - Server is written in C++ and runs on Linux.
 - Board and server communicate over UART. The Ethernet (RJ45) module is dropped.
-- LabVIEW works on the client side and connects to the server as a TCP client.
+- LabVIEW is a TCP client of the server. It runs on the client computer; if time allows, also on the server
+  computer (the same program with a different server address).
 - Idea for LabVIEW: send configuration commands automatically (for example measurement interval).
+- One TLV frame is used everywhere; the server and the console client use `pb::TlvFrame`.
+- `monitor_port` in `platformio.ini` is set by hand for now; automatic selection is a later goal.
+- Instructors (as reported by PB): a shared project is accepted by Object-Oriented Programming while that part
+  is done by one person, and by Network Programming for a team of three. Using `pb` as a dependency of the
+  server and client is accepted.
+
+## To be decided during implementation
+
+| Topic | Note |
+|---|---|
+| Shared server configuration | which values clients can change; decided while building the server |
+| UART framing | start marker and checksum; decided while building firmware and server |
+| Automatic serial port | later; options: no `monitor_port`, per-user file, USB identifiers |
 
 ## Open
 
 | Topic | Options | Note |
 |---|---|---|
-| Computer running LabVIEW | with the server / with a client | |
-| `Measurement` as template | `Measurement<T>` or plain class | affects the class diagram |
-| TLV implementation | server and client use `pb::TlvFrame` / own code | ask the Network Programming instructor |
-| Shared server configuration | which values (interval, alarm thresholds, ...) | needed for the README and protocol |
-| UART framing | start marker, checksum | UART has no message boundaries |
-| C++ standard on AVR | C++17 / C++14 | check with the AVR toolchain |
-| "CMake and Make" bonus | CMake only / plus a Makefile | ask the OOP instructor |
-| Serial port in `platformio.ini` | fixed port / auto-detect / per-user file | `monitor_port` is now fixed |
+| Type returned by sensors | `Measurement<int32_t>` (fixed point) / `Measurement<float>` | decide with the first sensor class |
 
-## Questions for the instructors
+## Questions still open
 
-- **Object-Oriented Programming:** is code without exceptions and STL on the microcontroller accepted
-  (setters return `bool`)? What form of demo on the microcontroller is expected? Is a shared project
-  with other courses allowed? Does "CMake and Make" need a separate Makefile?
-- **Network Programming:** is a shared project with other courses allowed? Is a library from another course
-  acceptable as a dependency? What are the current deadlines (the file lists dates from 2025)?
-- **Computer Measurement Systems:** is a LabVIEW panel connecting to a server over TCP accepted as
-  communication with an additional device?
+- **Network Programming:** confirm the exact deadlines on UPEL (outline and final submission; the final one
+  is remembered as about 22 January 2027).
 
 ## If the TLV format changes, update
 

@@ -1,3 +1,7 @@
+#if __cplusplus < 201703L
+#error "C++17 is not enabled"
+#endif
+
 #ifndef F_CPU
 #define F_CPU 16000000UL
 #endif

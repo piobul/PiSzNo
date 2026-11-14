@@ -1,6 +1,6 @@
 # pb – C++ library for sensors, buffers and TLV frames
 
-Project for the Object-Oriented Programming course. Author: Piotr B. (namespace `pb`).
+Project for the Object-Oriented Programming course. Author: PB (namespace `pb`).
 
 The library is meant for embedded use (ATmega328) and also compiles on a PC. It models the sensors of
 the PiSzNo weather station, stores measurements in a ring buffer and encodes them into binary TLV frames.
@@ -15,7 +15,7 @@ TODO: 1–2 sentences about possible uses outside this project.
 | `TemperatureSensor`, `PressureSensor` | Abstract classes for sensor kinds |
 | `Ds18b20`, `Bmp280` | Concrete sensors |
 | `OneWireBus`, `I2cBus` | Hardware access interfaces that can be replaced by test doubles |
-| `Measurement` | One measurement value with optional timestamp (TODO: decide if it becomes a template) |
+| `Measurement<T>` | One measurement value with optional timestamp; template over the number type |
 | `RingBuffer<T, N>` | Ring buffer with size known at compile time |
 | `TlvFrame` | Encoding and decoding of TLV frames |
 | `WeatherStation` | Collects sensors and holds the measurement buffer |
