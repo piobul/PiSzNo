@@ -1,7 +1,20 @@
 {
   "folders": [
-    { "name": "firmware (PlatformIO)", "path": "firmware" },
-    { "name": "pb", "path": "pb" },
-    { "name": "cały folder", "path": "." }
+    {
+      "name": "firmware (PlatformIO)",
+      "path": "firmware"
+    },
+    {
+      "name": "pb",
+      "path": "pb"
+    },
+    {
+      "name": "cały folder",
+      "path": "."
+    },
+    {
+      "name": "week-3",
+      "path": "design-lab/week-3"
+    }
   ]
 }
